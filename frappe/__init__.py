@@ -178,11 +178,11 @@ def connect(site=None, db_name=None):
 def connect_read_only():
 	from frappe.database import get_db
 
-	local.read_only_db = get_db(local.conf.slave_host, local.conf.slave_db_name,
-		local.conf.slave_db_password)
+	local.read_only_db = get_db(local.conf.subordinate_host, local.conf.subordinate_db_name,
+		local.conf.subordinate_db_password)
 
 	# swap db connections
-	local.master_db = local.db
+	local.main_db = local.db
 	local.db = local.read_only_db
 
 def get_site_config(sites_path=None, site_path=None):
@@ -483,13 +483,13 @@ def whitelist(allow_guest=False, xss_safe=False):
 def read_only():
 	def innfn(fn):
 		def wrapper_fn(*args, **kwargs):
-			if conf.use_slave_for_read_only:
+			if conf.use_subordinate_for_read_only:
 				connect_read_only()
 
 			retval = fn(*args, **get_newargs(fn, kwargs))
 
-			if local and hasattr(local, 'master_db'):
-				local.db = local.master_db
+			if local and hasattr(local, 'main_db'):
+				local.db = local.main_db
 
 			return retval
 		return wrapper_fn

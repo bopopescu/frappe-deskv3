@@ -103,7 +103,7 @@ def get_versions():
 			"branch": get_app_branch(app)
 		}
 
-		if versions[app]['branch'] != 'master':
+		if versions[app]['branch'] != 'main':
 			try:
 				app_repo = git.Repo(os.path.join('..', 'apps', '{}'.format(app)))
 				branch_version = '-'.join(app_repo.git.describe().split('-')[:2])
